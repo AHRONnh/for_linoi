@@ -1,519 +1,264 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#07111f" />
-  <title>הזמנה סודית 🐧</title>
-  <style>
-    :root{--bg:#07111f;--card:rgba(13,31,51,.76);--line:rgba(255,255,255,.12);--cyan:#47d7ff;--green:#42e58b;--red:#ff5f75;--text:#f7fbff;--muted:#b8cada}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;min-height:100%;font-family:Arial,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#12355b 0,#07111f 48%,#030711 100%);color:var(--text);overflow-x:hidden}
-    body{display:flex;align-items:center;justify-content:center;padding:18px;min-height:100svh}
-    .snow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-    .flake{position:absolute;top:-10vh;color:#fff;opacity:.55;animation:fall linear infinite}
-    @keyframes fall{to{transform:translateY(120vh) rotate(360deg)}}
-    .wrap{width:min(430px,100%);position:relative;z-index:2}
-    .card{background:var(--card);border:1px solid var(--line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:28px;padding:24px 20px 22px;box-shadow:0 24px 80px rgba(0,0,0,.45);text-align:center;min-height:650px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
-    .card:before{content:"";position:absolute;width:240px;height:240px;background:rgba(71,215,255,.12);filter:blur(55px);border-radius:50%;top:-110px;right:-80px}
-    .step{display:none;animation:fade .45s ease}
-    .step.active{display:block}
-    @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-    .penguin-wrap{position:relative;height:210px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:8px}
-    .penguin{width:160px;height:190px;position:relative;animation:bob 2.4s ease-in-out infinite;transform-origin:center bottom}
-    @keyframes bob{50%{transform:translateY(-5px) rotate(1deg)}}
-    .body{position:absolute;left:30px;top:26px;width:100px;height:142px;border-radius:52% 52% 48% 48%;background:#0a0d12;border:3px solid #202b36}
-    .belly{position:absolute;left:48px;top:66px;width:64px;height:94px;border-radius:48% 48% 42% 42%;background:#f2f7fb}
-    .head{position:absolute;left:36px;top:10px;width:88px;height:82px;border-radius:50%;background:#0a0d12;border:3px solid #202b36}
-    .face{position:absolute;left:48px;top:30px;width:64px;height:48px;border-radius:48%;background:#f2f7fb}
-    .eye{position:absolute;top:47px;width:8px;height:10px;background:#07111f;border-radius:50%;animation:blink 4.6s infinite}
-    .eye.l{left:61px}.eye.r{right:61px}
-    @keyframes blink{0%,45%,49%,100%{transform:scaleY(1)}47%{transform:scaleY(.08)}}
-    .beak{position:absolute;left:69px;top:60px;width:22px;height:14px;background:#ffb13b;clip-path:polygon(0 20%,100% 20%,50% 100%)}
-    .wing{position:absolute;top:71px;width:28px;height:76px;background:#0a0d12;border:3px solid #202b36;border-radius:50%;z-index:-1}
-    .wing.l{left:15px;transform:rotate(18deg)}.wing.r{right:15px;transform:rotate(-18deg)}
-    .foot{position:absolute;bottom:6px;width:42px;height:18px;background:#ffb13b;border-radius:50% 50% 40% 40%}
-    .foot.l{left:34px;transform:rotate(-8deg)}.foot.r{right:34px;transform:rotate(8deg)}
-    .scarf{position:absolute;left:43px;top:81px;width:74px;height:17px;background:var(--cyan);border-radius:10px;z-index:3;transform:rotate(-4deg)}
-    .scarf:after{content:"";position:absolute;right:4px;top:10px;width:20px;height:52px;background:var(--cyan);border-radius:8px;transform:rotate(-12deg)}
-    .speech{position:absolute;top:0;right:0;left:0;margin:auto;width:92%;background:#fff;color:#102033;border-radius:18px;padding:12px 15px;font-weight:700;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;transform:translateY(8px);transition:.3s;z-index:6}
-    .speech.show{opacity:1;transform:none}.speech:after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:#fff;border-bottom:0}
-    h1{font-size:32px;margin:8px 0 10px;line-height:1.15}h2{font-size:27px;margin:8px 0 10px}.lead{font-size:17px;line-height:1.65;color:var(--muted);margin:0 auto 20px;max-width:340px}
-    .mission{border:1px dashed rgba(71,215,255,.45);background:rgba(71,215,255,.07);border-radius:18px;padding:15px;margin:16px 0;font-size:17px;line-height:1.8}
-    .datebox{display:grid;gap:8px;margin:16px auto 20px;max-width:320px}.dateitem{background:rgba(255,255,255,.07);border:1px solid var(--line);padding:12px;border-radius:14px;font-weight:700}
-    button,a.btn{border:0;border-radius:16px;padding:15px 18px;font-size:18px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.2s;box-shadow:0 10px 25px rgba(0,0,0,.2)}
-    button:active,a.btn:active{transform:scale(.97)}.primary{background:linear-gradient(135deg,var(--cyan),#6d8cff);color:#06111e;width:100%}.yes{background:linear-gradient(135deg,var(--green),#9cffc5);color:#062418;flex:1}.no{background:linear-gradient(135deg,var(--red),#ff9aab);color:#3d0710;flex:1;position:relative;z-index:4}
-    .choices{display:flex;gap:12px;margin-top:18px;position:relative;min-height:56px}
-    .penguin.snatching{position:fixed!important;z-index:60!important;margin:0!important;animation:none!important;transition:left .48s cubic-bezier(.2,.8,.2,1),top .48s cubic-bezier(.2,.8,.2,1),transform .32s ease;pointer-events:none}
-    .penguin.snatching.can-rage{pointer-events:auto;cursor:pointer;filter:drop-shadow(0 12px 20px rgba(0,0,0,.4))}
-    .penguin.raging{animation:rageShake .5s ease 2!important}
-    @keyframes rageShake{0%,100%{transform:rotate(-7deg) scale(.88)}20%{transform:rotate(-15deg) scale(.92)}40%{transform:rotate(5deg) scale(.9)}60%{transform:rotate(-12deg) scale(.93)}80%{transform:rotate(2deg) scale(.9)}}
-    .torn-half{position:absolute;top:104px;width:47px;height:42px;background:linear-gradient(135deg,var(--red),#ff9aab);color:#3d0710;font-weight:900;font-size:16px;display:grid;place-items:center;z-index:9;box-shadow:0 8px 20px rgba(0,0,0,.28);transition:transform 1.45s cubic-bezier(.2,.75,.2,1),opacity .85s}
-    .torn-half.left{left:32px;border-radius:14px 2px 2px 14px;clip-path:polygon(0 0,100% 0,80% 25%,100% 50%,80% 75%,100% 100%,0 100%)}
-    .torn-half.right{right:32px;border-radius:2px 14px 14px 2px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,20% 75%,0 50%,20% 25%)}
-    .trash-bin{position:fixed;left:18px;bottom:24px;font-size:62px;z-index:58;opacity:0;transform:translateY(35px) scale(.8);transition:.35s;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
-    .trash-bin.show{opacity:1;transform:none}
-    .angry-mark{position:absolute;right:18px;top:18px;font-size:34px;z-index:12;animation:popAngry .3s ease}
-    @keyframes popAngry{from{transform:scale(0) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
-    .penguin.snatching .wing{z-index:8;transition:.3s ease}
-    .penguin.snatching.hugging .wing.l{left:38px;top:92px;transform:rotate(-48deg)}
-    .penguin.snatching.hugging .wing.r{right:38px;top:92px;transform:rotate(48deg)}
-    .held-button{position:absolute;left:50%;top:104px;transform:translateX(-50%);width:92px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,var(--red),#ff9aab);color:#3d0710;font-weight:900;font-size:16px;box-shadow:0 8px 20px rgba(0,0,0,.28);z-index:7;animation:hugPulse 1.2s ease-in-out infinite}
-    @keyframes hugPulse{50%{transform:translateX(-50%) scale(.96)}}
-    .no.stolen{opacity:0;pointer-events:none}
-    .stamp{display:inline-block;border:4px solid var(--green);color:var(--green);border-radius:14px;padding:9px 14px;font-size:22px;font-weight:900;transform:rotate(-4deg);margin:12px 0;animation:stamp .45s ease both}
-    @keyframes stamp{from{opacity:0;transform:scale(2) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(-4deg)}}
-    .progress{height:10px;background:rgba(255,255,255,.09);border-radius:10px;overflow:hidden;margin:15px 0}.progress span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--cyan),var(--green));animation:fill 1.2s ease both}@keyframes fill{from{width:0}}
-    .small{font-size:13px;color:#8eabbf;margin-top:12px}.confetti{position:fixed;width:10px;height:16px;top:-30px;z-index:40;animation:confetti 2.4s linear forwards}@keyframes confetti{to{transform:translateY(110vh) rotate(760deg)}}
-    .warehouse{font-size:42px;animation:shake .5s ease}@keyframes shake{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
-    .mute{position:absolute;top:14px;left:14px;width:42px;height:42px;border-radius:50%;padding:0;background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);font-size:18px;z-index:10}
-    .identity-scan{width:220px;height:260px;margin:14px auto 10px;border:2px solid rgba(71,215,255,.55);border-radius:24px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(71,215,255,.08),rgba(255,255,255,.025));box-shadow:inset 0 0 35px rgba(71,215,255,.08),0 0 24px rgba(71,215,255,.08);user-select:none;touch-action:none}.identity-scan:before,.identity-scan:after{content:"";position:absolute;width:34px;height:34px;border-color:var(--cyan);z-index:4}.identity-scan:before{top:10px;left:10px;border-top:3px solid;border-left:3px solid}.identity-scan:after{right:10px;bottom:10px;border-right:3px solid;border-bottom:3px solid}.scan-avatar{position:absolute;inset:25px;display:grid;place-items:center;font-size:118px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));opacity:.9}.scan-line{position:absolute;left:7%;right:7%;height:4px;top:7%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);opacity:0;z-index:5}.identity-scan.scanning .scan-line{opacity:1;animation:bodyScan 2.8s ease-in-out forwards}.identity-scan.scanning{animation:scanPulse 2.8s ease forwards}.scan-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(71,215,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(71,215,255,.08) 1px,transparent 1px);background-size:24px 24px;opacity:.45}.scan-result{position:absolute;inset:0;display:grid;place-items:center;background:rgba(4,18,31,.92);opacity:0;transition:.35s;z-index:8;padding:18px}.scan-result.show{opacity:1}.scan-result strong{display:block;font-size:24px;color:var(--green);margin-top:8px}.scan-result span{font-size:14px;color:var(--muted)}@keyframes scanPulse{50%{box-shadow:inset 0 0 55px rgba(71,215,255,.18),0 0 0 14px rgba(71,215,255,.05)}100%{box-shadow:inset 0 0 35px rgba(71,215,255,.08),0 0 24px rgba(71,215,255,.08)}}@keyframes bodyScan{0%{top:7%}50%{top:88%}100%{top:7%}}.envelopes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.envelope{padding:18px 8px;font-size:34px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:#fff;border-radius:18px}.envelope small{display:block;font-size:12px;margin-top:6px;color:var(--muted)}.envelope.opened{animation:openEnvelope .65s ease both}@keyframes openEnvelope{50%{transform:translateY(-12px) rotate(-4deg) scale(1.08)}100%{transform:scale(1.02)}}.classified{letter-spacing:3px;font-size:12px;color:var(--cyan);font-weight:900;margin-bottom:5px}.reveal-card{border:1px solid rgba(71,215,255,.35);background:linear-gradient(145deg,rgba(71,215,255,.09),rgba(255,255,255,.05));padding:17px;border-radius:20px;margin:13px 0 18px}.tiny-status{font-size:13px;color:var(--muted);min-height:22px}.romantic-note{margin:14px auto 8px;padding:14px 16px;max-width:340px;border-radius:18px;background:linear-gradient(135deg,rgba(255,95,117,.12),rgba(109,140,255,.12));border:1px solid rgba(255,180,195,.22);font-size:16px;line-height:1.65;color:#fceef3;box-shadow:0 12px 30px rgba(0,0,0,.15)}.heart-float{position:fixed;bottom:-40px;z-index:1;pointer-events:none;opacity:0;animation:heartRise 6s ease-in forwards;filter:drop-shadow(0 0 10px rgba(255,130,160,.25))}@keyframes heartRise{0%{opacity:0;transform:translateY(0) scale(.7) rotate(0)}15%{opacity:.55}80%{opacity:.35}100%{opacity:0;transform:translateY(-110vh) scale(1.25) rotate(25deg)}}.romantic-glow{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 50% 25%,rgba(255,120,150,.10),transparent 40%);opacity:0;transition:opacity 1.2s}.romantic-glow.show{opacity:1}.soft-divider{display:flex;align-items:center;gap:10px;margin:13px auto;color:#ffb8ca;font-size:13px;max-width:300px}.soft-divider:before,.soft-divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(255,184,202,.55),transparent)}
-    @media(max-height:720px){.card{min-height:calc(100svh - 36px);padding-top:18px}.penguin-wrap{height:175px}.penguin{transform:scale(.84);margin-bottom:-15px}h1{font-size:28px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>היום שלי והחיוך שלך ❤️</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Arial,"Noto Sans Hebrew",sans-serif;background:#0c1118;color:#fff;overflow:hidden}
+body{transition:.8s background}
+body.happy{background:#5e5ad8}
+.bg{position:fixed;inset:0;z-index:0;background:
+radial-gradient(circle at 70% 12%,rgba(255,255,255,.08),transparent 24%),
+linear-gradient(155deg,#343b45,#0f141a 70%);transition:1s}
+body.happy .bg{background:
+radial-gradient(circle at 78% 15%,rgba(255,237,150,.75),transparent 18%),
+radial-gradient(circle at 20% 80%,rgba(255,120,190,.35),transparent 25%),
+linear-gradient(145deg,#ff9c8e,#c276be 45%,#6774df)}
+.rain,.hearts{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.drop{position:absolute;top:-40px;width:2px;height:28px;background:#ffffff32;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(115vh)}}
+.heart{position:absolute;bottom:-35px;font-size:22px;animation:rise 4.8s linear forwards;opacity:0}
+@keyframes rise{15%{opacity:.95}100%{opacity:0;transform:translateY(-112vh) translateX(var(--x)) scale(1.25)}}
+.app{position:relative;z-index:3;height:100%;display:grid;place-items:center;padding:16px}
+.phone{width:min(94vw,500px);height:min(92vh,790px);border:1px solid #ffffff35;background:#ffffff10;backdrop-filter:blur(18px);border-radius:32px;box-shadow:0 28px 80px #0008;overflow:hidden;position:relative}
+.progress{display:flex;gap:5px;padding:14px 15px 0;direction:ltr}
+.progress span{height:4px;flex:1;background:#ffffff28;border-radius:20px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:#fff;transition:.25s}
+.slide{position:absolute;inset:34px 0 0;padding:26px 24px 30px;display:none;text-align:center}
+.slide.active{display:flex;flex-direction:column;justify-content:center;align-items:center;animation:enter .42s both}
+@keyframes enter{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:13px;opacity:.68;margin-bottom:8px}
+.emoji{font-size:68px;margin-bottom:10px;filter:drop-shadow(0 10px 18px #0004)}
+h1{font-size:39px;line-height:1.08;margin:6px 0 12px}
+h2{font-size:31px;line-height:1.15;margin:5px 0 12px}
+.txt{font-size:19px;line-height:1.65;max-width:400px;color:#f6f6f6}
+.quote{font-size:25px;font-weight:900;line-height:1.45;margin:15px 0;max-width:410px}
+.time{display:inline-block;padding:8px 13px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff30;font-weight:800;margin-bottom:14px}
+.next{margin-top:25px;border:0;border-radius:18px;padding:14px 25px;font:800 17px Arial;background:#fff;color:#34455e;box-shadow:0 10px 26px #0004;cursor:pointer}
+.darkBtn{background:#ffffff13;color:#fff;border:1px solid #ffffff35}
+.separator{width:80px;height:4px;border-radius:10px;background:#ffffff50;margin:18px 0}
+.final{background:linear-gradient(145deg,rgba(255,157,140,.86),rgba(181,110,190,.90),rgba(96,117,220,.92))}
+.wa{margin-top:20px;border:0;border-radius:18px;padding:15px 24px;font:800 17px Arial;background:#fff;color:#34455e;cursor:pointer;box-shadow:0 12px 28px #0004}
+.note{font-size:11px;opacity:.68;margin-top:10px}
+.tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:11px;opacity:.35}
+.sun{font-size:72px;animation:pulse 1.3s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+</style>
 </head>
 <body>
-  <div class="snow" id="snow"></div><div class="romantic-glow" id="romanticGlow"></div>
-  <main class="wrap">
-    <section class="card">
-      <button class="mute" id="muteBtn" aria-label="השתקת קול">🔊</button>
+<div class="bg"></div>
+<div class="rain" id="rain"></div>
+<div class="hearts" id="hearts"></div>
 
-      <div class="step active" id="step1">
-        <div class="penguin-wrap">
-          <div class="speech show" id="speech1">רגע... את בדיוק מי שחיפשתי. 🐧</div>
-          <div class="penguin" id="penguin1"><div class="wing l"></div><div class="wing r"></div><div class="body"></div><div class="belly"></div><div class="head"></div><div class="face"></div><div class="eye l"></div><div class="eye r"></div><div class="beak"></div><div class="scarf"></div><div class="foot l"></div><div class="foot r"></div></div>
-        </div>
-        <div class="classified">CLASSIFIED DELIVERY</div>
-        <h1>משלוח סודי הגיע אלייך</h1>
-        <p class="lead">אסור לי לגלות מי שלח אותו לפני שאוודא שהמשלוח הגיע ללינוי מנזר.</p>
-        <button class="primary" onclick="startVerification()">🔐 התחילי אימות</button>
-      </div>
+<div class="app">
+<div class="phone">
+<div class="progress" id="progress"></div>
 
-      <div class="step" id="step2">
-        <div class="penguin-wrap">
-          <div class="speech show" id="verifySpeech">שימי אצבע על הסורק ואל תזוזי...</div>
-          <div class="penguin"><div class="wing l"></div><div class="wing r"></div><div class="body"></div><div class="belly"></div><div class="head"></div><div class="face"></div><div class="eye l"></div><div class="eye r"></div><div class="beak"></div><div class="scarf"></div><div class="foot l"></div><div class="foot r"></div></div>
-        </div>
-        <h2>סריקת זהות סודית</h2>
-        <p class="lead">עמדי מול המסך ולחצי על הסורק. הפינגווין יבדוק אם את באמת לינוי מנזר.</p>
-        <div class="identity-scan" id="identityScan">
-          <div class="scan-grid"></div>
-          <div class="scan-avatar">👤</div>
-          <div class="scan-line"></div>
-          <div class="scan-result" id="scanResult"><div><span>IDENTITY CONFIRMED</span><strong>לינוי מנזר ✅</strong></div></div>
-        </div>
-        <button class="primary" id="scanBtn" onclick="beginIdentityScan()">🔍 התחילי סריקה</button>
-        <div class="tiny-status" id="scanStatus">המערכת ממתינה לסריקה...</div>
-      </div>
+<section class="slide active">
+  <div class="eyebrow">ניסוי קטן על היום שלי…</div>
+  <div class="emoji">🙂</div>
+  <h1>איך נראה היום שלי<br>בלי החיוך שלך?</h1>
+  <div class="txt">זה כנראה נשמע קצת מוגזם…<br>אבל תמשיכי ותראי בעצמך…</div>
+  <button class="next">יאללה, תראה לי 👀</button>
+</section>
 
-      <div class="step" id="step3">
-        <div class="penguin-wrap">
-          <div class="speech show" id="envelopeSpeech">האימות עבר! עכשיו תבחרי מעטפה אחת.</div>
-          <div class="penguin"><div class="wing l"></div><div class="wing r"></div><div class="body"></div><div class="belly"></div><div class="head"></div><div class="face"></div><div class="eye l"></div><div class="eye r"></div><div class="beak"></div><div class="scarf"></div><div class="foot l"></div><div class="foot r"></div></div>
-        </div>
-        <div class="classified">ONE CHOICE ONLY</div>
-        <h2>איזו מעטפה נועדה ללינוי?</h2>
-        <p class="lead">רמז קטן: אין בחירה לא נכונה... אבל אל תגלי לפינגווין.</p>
-        <div class="envelopes">
-          <button class="envelope" onclick="chooseEnvelope(this,1)">💌<small>מס׳ 1</small></button>
-          <button class="envelope" onclick="chooseEnvelope(this,2)">✉️<small>מס׳ 2</small></button>
-          <button class="envelope" onclick="chooseEnvelope(this,3)">💙<small>מס׳ 3</small></button>
-        </div>
-        <div class="tiny-status" id="envelopeStatus">בחרי לפי תחושת בטן 😉</div>
-      </div>
+<section class="slide">
+  <div class="time">08:00</div>
+  <div class="emoji">😐</div>
+  <h2>קם בבוקר</h2>
+  <div class="quote">״טוב… עוד יום רגיל.״</div>
+  <div class="txt">קמים, מתארגנים, מתחילים לזוז…<br>אבל משהו עדיין חסר.</div>
+  <button class="next">ממשיכים…</button>
+</section>
 
-      <div class="step" id="step4">
-        <div class="penguin-wrap">
-          <div class="speech show" id="questionSpeech">יפה... מצאת את ההודעה האמיתית.</div>
-          <div class="penguin" id="mainPenguin"><div class="wing l"></div><div class="wing r"></div><div class="body"></div><div class="belly"></div><div class="head"></div><div class="face"></div><div class="eye l"></div><div class="eye r"></div><div class="beak"></div><div class="scarf"></div><div class="foot l"></div><div class="foot r"></div></div>
-        </div>
-        <div class="reveal-card">
-          <div class="classified">THE MESSAGE</div>
-          <div class="soft-divider">💗 הודעה מיוחדת עבור לינוי</div>
-          <p class="romantic-note">יש מישהו שחושב שערב משותף יכול להפוך לזיכרון ממש יפה.</p>
-          <h1>אז... בא לך לצאת איתי לדייט? ❤️</h1>
-          <div class="datebox">
-            <div class="dateitem">📅 יום חמישי | 06.08.2026</div>
-            <div class="dateitem">🕘 בשעה 21:00</div>
-            <div class="dateitem">📍 המיקום נשאר סודי בינתיים 😉</div>
-          </div>
-        </div>
-        <div class="choices" id="choices">
-          <button class="yes" onclick="acceptDate()">כן 😍</button>
-          <button class="no" id="noBtn" onclick="stealNo(event)">לא ✕</button>
-        </div>
-      </div>
+<section class="slide">
+  <div class="time">10:00</div>
+  <div class="emoji">☕</div>
+  <h2>הקפה הראשון</h2>
+  <div class="quote">״אפילו הקפה מרגיש כמו מים.״</div>
+  <div class="txt">אפילו הדבר הקטן שאמור לפתוח את הבוקר לא באמת משנה את ההרגשה.</div>
+  <button class="next">ומה בצהריים?</button>
+</section>
 
-      <div class="step" id="step5">
-        <div class="penguin-wrap">
-          <div class="speech show">יששש! המשימה הושלמה בהצלחה!</div>
-          <div class="penguin"><div class="wing l"></div><div class="wing r"></div><div class="body"></div><div class="belly"></div><div class="head"></div><div class="face"></div><div class="eye l"></div><div class="eye r"></div><div class="beak"></div><div class="scarf"></div><div class="foot l"></div><div class="foot r"></div></div>
-        </div>
-        <div class="stamp">הדייט אושר! ✅</div>
-        <div class="progress"><span></span></div>
-        <p><strong>MISSION COMPLETE — 100%</strong></p>
-        <div class="datebox">
-          <div class="dateitem">📅 יום חמישי | 06.08.2026</div>
-          <div class="dateitem">🕘 21:00</div>
-          <div class="dateitem">📍 המיקום סודי בינתיים 😉</div>
-        </div>
-        <div class="warehouse">📦</div>
-        <p class="lead" style="color:#fff"><strong>עכשיו אפשר להחזיר את הכפתור האדום למחסן.</strong> 😂</p>
-        <p class="romantic-note">תגיעי עם חיוך. את כל השאר הוא כבר מתכנן. ✨</p>
-        <a class="btn primary" id="whatsappBtn" href="#" target="_blank" rel="noopener">📲 שלחי אישור הגעה</a>
-        <p class="small" id="confirmStatus">בלחיצה תיפתח הודעת וואטסאפ מוכנה מראש.</p>
-      </div>
-    </section>
-  </main>
+<section class="slide">
+  <div class="time">14:00</div>
+  <div class="emoji">📱</div>
+  <h2>בודק את הטלפון</h2>
+  <div class="quote">אין חיוך. אין הודעה.<br>ושוב… משהו פשוט חסר.</div>
+  <div class="txt">אני מתחיל לחשוד שהיום הזה פשוט החליט להיות משעמם בכוונה.</div>
+  <button class="next">ממשיכים…</button>
+</section>
+
+<section class="slide">
+  <div class="time">18:00</div>
+  <div class="emoji">🚗</div>
+  <h2>בדרך הביתה</h2>
+  <div class="quote">מוזיקה יש.<br>מצב רוח? פחות.</div>
+  <div class="txt">אפילו השירים הטובים נשמעים קצת פחות טוב.</div>
+  <button class="next">ואז מה?</button>
+</section>
+
+<section class="slide">
+  <div class="time">21:00</div>
+  <div class="emoji">🌙</div>
+  <h2>סוף היום</h2>
+  <div class="quote">יום סבבה…<br>אבל לא יום שאני אזכור.</div>
+  <div class="txt">ואז מגיע החלק המעניין.</div>
+  <button class="next" id="turnHappy">מה קורה כשאני רואה את החיוך שלך? ❤️</button>
+</section>
+
+<section class="slide">
+  <div class="sun">☀️</div>
+  <h1>בום.</h1>
+  <div class="quote">פתאום הכול נראה אחרת.</div>
+  <div class="txt">אותו יום בדיוק.<br>רק עם חיוך אחד שלך.</div>
+  <button class="next">תראה לי את ההבדל 😌</button>
+</section>
+
+<section class="slide">
+  <div class="time">08:00</div>
+  <div class="emoji">😍</div>
+  <h2>קם בבוקר</h2>
+  <div class="quote">״היום אני הולך לראות אותך.״</div>
+  <div class="txt">ופתאום יש סיבה טובה לקום מהמיטה 😏❤️</div>
+  <button class="next">ומה עם הקפה?</button>
+</section>
+
+<section class="slide">
+  <div class="time">10:00</div>
+  <div class="emoji">☕❤️</div>
+  <h2>אותו קפה</h2>
+  <div class="quote">אבל פתאום הוא טעים יותר.</div>
+  <div class="txt">לא יודע להסביר את המדע מאחורי זה.<br>כנראה אשמתך 😂</div>
+  <button class="next">צהריים 👀</button>
+</section>
+
+<section class="slide">
+  <div class="time">14:00</div>
+  <div class="emoji">📱💌</div>
+  <h2>הודעה ממך</h2>
+  <div class="quote">״טוב, היום ניצל.״ ❤️</div>
+  <div class="txt">מספיק אפילו משהו קטן ממך כדי לשנות לי את כל המצב רוח.</div>
+  <button class="next">ועכשיו בדרך?</button>
+</section>
+
+<section class="slide">
+  <div class="time">18:00</div>
+  <div class="emoji">🚗✨</div>
+  <h2>בדרך אלייך</h2>
+  <div class="quote">אותה דרך.<br>פתאום קצרה בחצי.</div>
+  <div class="txt">והמוזיקה? משום מה הכול נהיה שיר טוב 😂❤️</div>
+  <button class="next">ומה בסוף היום?</button>
+</section>
+
+<section class="slide">
+  <div class="time">21:00</div>
+  <div class="emoji">🌙❤️</div>
+  <h2>סוף היום</h2>
+  <div class="quote">זה כבר יום ששווה לזכור.</div>
+  <div class="txt">והקטע המצחיק הוא שלא באמת השתנה הרבה…<br>חוץ מזה שראיתי אותך מחייכת.</div>
+  <button class="next">אז מה המסקנה? 🥹</button>
+</section>
+
+<section class="slide final">
+  <div class="emoji">🥹❤️</div>
+  <h1>המסקנה די ברורה</h1>
+  <div class="txt">
+    מסתבר שהחיוך שלך משפיע על היום שלי<br>
+    קצת יותר ממה שחשבתי…
+  </div>
+  <div class="separator"></div>
+  <div class="quote">אז תשלחי לי בבקשה<br>תמונה של החיוך שלך ❤️📸</div>
+  <button class="wa" id="waBtn">בסדררר 😌📸</button>
+  <div class="note">זה יפתח WhatsApp עם הודעה מוכנה</div>
+</section>
+
+<div class="tapHint">אפשר גם להחליק שמאלה/ימינה בין השקופיות</div>
+</div>
+</div>
 
 <script>
-  let muted = false;
-  let theftDone = false;
-  let noDestroyed = false;
-  let activeAudio = null;
-  let selectedVoice = null;
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+const slides=[...document.querySelectorAll('.slide')];
+const prog=document.getElementById('progress');
+let cur=0, happy=false;
 
-  const voiceFiles = {
-    intro: 'audio/01-intro.mp3',
-    verify: 'audio/02-verify.mp3',
-    scan: 'audio/03-scan.mp3',
-    identified: 'audio/04-identified.mp3',
-    envelope: 'audio/05-envelope.mp3',
-    found: 'audio/06-found.mp3',
-    wait: 'audio/07-wait.mp3',
-    snatch: 'audio/08-snatch.mp3',
-    promise: 'audio/09-promise.mp3',
-    green: 'audio/10-green.mp3',
-    success: 'audio/11-success.mp3',
-    warehouse: 'audio/12-warehouse.mp3',
-    romantic: 'audio/13-romantic.mp3',
-    finalRomantic: 'audio/14-final-romantic.mp3',
-    angry: 'audio/15-angry.mp3',
-    tear: 'audio/16-tear.mp3',
-    trash: 'audio/17-trash.mp3'
-  };
+slides.forEach(()=>{const s=document.createElement('span');s.innerHTML='<i></i>';prog.appendChild(s)});
+const bars=[...prog.querySelectorAll('i')];
 
-  function stopAudio(){
-    if (activeAudio) {
-      activeAudio.pause();
-      activeAudio.currentTime = 0;
-      activeAudio = null;
-    }
+function show(n){
+  if(n<0||n>=slides.length)return;
+  slides.forEach((s,i)=>s.classList.toggle('active',i===n));
+  bars.forEach((b,i)=>b.style.width=i<=n?'100%':'0%');
+  cur=n;
+
+  // Slides 0-5 = sad side. Slides 6+ = happy side.
+  const shouldBeHappy = n >= 6;
+  document.body.classList.toggle('happy', shouldBeHappy);
+  rain.style.opacity = shouldBeHappy ? '0' : '1';
+
+  if(shouldBeHappy && !happy){
+    happy = true;
+    heartsBurst();
   }
-
-  const voiceText = {
-    intro: 'רגע אחד... כן. את בדיוק הבחורה שחיפשתי.',
-    verify: 'רגע לפני שאני מוסר את המשלוח... אני חייב לוודא שזו באמת לינוי מנזר.',
-    scan: 'אל תזוזי... הסריקה מתחילה עכשיו.',
-    identified: 'הסריקה הושלמה... זוהתה לינוי מנזר. האימות עבר בהצלחה.',
-    envelope: 'מצוין... האימות עבר בהצלחה. עכשיו תבחרי מעטפה אחת.',
-    found: 'יפה מאוד. מצאת את ההודעה האמיתית.',
-    wait: 'רגע, רגע... את הכפתור הזה אני חייב לעצור.',
-    snatch: 'הופ! את זה אני לוקח איתי!',
-    promise: 'מבטיח... אני אחזיר אותו אחרי הדייט הראשון.',
-    green: 'עד אז, נשאר רק הכפתור הירוק.',
-    success: 'יששש! המשימה הושלמה בהצלחה!',
-    warehouse: 'עכשיו אפשר להחזיר את הכפתור האדום למחסן.',
-    romantic: 'יש מישהו שחושב שערב משותף יכול להפוך לזיכרון ממש יפה.',
-    finalRomantic: 'תגיעי עם חיוך... את כל השאר הוא כבר מתכנן.',
-    angry: 'מה? את עדיין מנסה לקחת אותו?',
-    tear: 'טוב... עכשיו הוא באמת לא חוזר.',
-    trash: 'יש דברים שפשוט שייכים לפח.'
-  };
-
-  function loadBestVoice(){
-    const voices = speechSynthesis.getVoices();
-    const hebrew = voices.filter(v => /^he(-|_)/i.test(v.lang) || /hebrew|עברית/i.test(v.name));
-    const preferred = hebrew.find(v => /hila|הילה|google|natural|neural|microsoft/i.test(v.name))
-      || hebrew.find(v => /female|woman|נקבה/i.test(v.name))
-      || hebrew[0]
-      || voices.find(v => /^en(-|_)/i.test(v.lang))
-      || null;
-    selectedVoice = preferred;
+  if(!shouldBeHappy){
+    happy = false;
   }
+}
+document.querySelectorAll('.next').forEach(b=>b.addEventListener('click',()=>show(cur+1)));
 
-  loadBestVoice();
-  if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = loadBestVoice;
+const rain=document.getElementById('rain');
+for(let i=0;i<34;i++){
+ const d=document.createElement('div');d.className='drop';
+ d.style.left=Math.random()*100+'%';
+ d.style.animationDuration=(1.4+Math.random()*1.7)+'s';
+ d.style.animationDelay=(-Math.random()*3)+'s';
+ rain.appendChild(d);
+}
 
-  async function speakFallback(text, key='default'){
-    if (muted || !text || !('speechSynthesis' in window)) return false;
-    speechSynthesis.cancel();
-    const profiles = {
-      intro:[0.98,0.98], verify:[0.96,0.97], scan:[0.97,0.97], identified:[0.96,0.98],
-      envelope:[0.99,1.00], found:[0.98,0.99], romantic:[0.93,0.96], wait:[1.01,1.00],
-      snatch:[1.03,1.02], promise:[0.96,0.98], green:[0.99,1.00], success:[1.03,1.02],
-      warehouse:[0.99,1.00], finalRomantic:[0.94,0.96], angry:[1.02,0.95], tear:[0.98,0.94], trash:[0.97,0.94], default:[0.98,0.98]
-    };
-    const [rate,pitch] = profiles[key] || profiles.default;
-    return await new Promise(resolve => {
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'he-IL';
-      if (selectedVoice) u.voice = selectedVoice;
-      u.rate = rate;
-      u.pitch = pitch;
-      u.volume = 1;
-      let finished = false;
-      const done = value => {
-        if (finished) return;
-        finished = true;
-        setTimeout(() => resolve(value), 25);
-      };
-      u.onend = () => done(true);
-      u.onerror = () => done(false);
-      speechSynthesis.speak(u);
-      setTimeout(() => done(false), Math.max(7000, text.length * 280));
-    });
-  }
+function heartsBurst(){
+ const box=document.getElementById('hearts');
+ for(let i=0;i<28;i++){
+  const h=document.createElement('div');h.className='heart';
+  h.textContent=Math.random()>.25?'❤️':'✨';
+  h.style.left=Math.random()*100+'%';
+  h.style.setProperty('--x',((Math.random()-.5)*140)+'px');
+  h.style.animationDelay=Math.random()*.7+'s';
+  box.appendChild(h);setTimeout(()=>h.remove(),5600);
+ }
+}
 
-  function playVoice(key){
-    if (muted) return Promise.resolve(false);
-    stopAudio();
-    return speakFallback(voiceText[key], key);
-  }
+document.getElementById('turnHappy').addEventListener('click',()=>{
+  // show() on the next slide handles the mood transition automatically.
+});
 
-  document.getElementById('muteBtn').onclick = () => {
-    muted = !muted;
-    document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
-    if (muted) { stopAudio(); if ('speechSynthesis' in window) speechSynthesis.cancel(); }
-  };
+document.getElementById('waBtn').onclick=()=>{
+ const phone='972528956556';
+ const msg='הנה החיוך שביקשת ❤️📸';
+ location.href='https://wa.me/'+phone+'?text='+encodeURIComponent(msg);
+};
 
-  function goTo(n){
-    stopAudio();
-    if ('speechSynthesis' in window) speechSynthesis.cancel();
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step'+n).classList.add('active');
-  }
+// swipe support
+let sx=0;
+document.querySelector('.phone').addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.querySelector('.phone').addEventListener('touchend',e=>{
+ const dx=e.changedTouches[0].clientX-sx;
+ if(Math.abs(dx)>55) show(cur+(dx<0?1:-1));
+},{passive:true});
 
-  async function startVerification(){
-    goTo(2);
-    const bubble=document.getElementById('verifySpeech');
-    bubble.textContent='רגע לפני מסירת המשלוח... אני חייב לוודא שאת באמת לינוי מנזר. 🔍';
-    await playVoice('verify');
-  }
+// brighter romantic background music after first interaction
+(()=>{
+ let ctx,master,started=false,step=0,timer;
+ const chords=[[261.63,329.63,392],[196,246.94,293.66],[220,261.63,329.63],[174.61,220,261.63]];
+ const melody=[659.25,783.99,880,783.99,659.25,587.33,659.25,783.99];
+ function tone(f,t,d,v,type='sine'){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.08);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.05)}
+ function bar(){const now=ctx.currentTime+.03,c=chords[step%chords.length];c.forEach((f,i)=>tone(f/2,now,2.2,i?0.012:0.022,i?'triangle':'sine'));tone(melody[step%melody.length],now+.2,.7,.018);tone(melody[(step+1)%melody.length],now+1.15,.6,.014);step++}
+ function start(){if(started)return;started=true;ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.7;master.connect(ctx.destination);bar();timer=setInterval(bar,2000)}
+ document.addEventListener('pointerdown',start,{once:true});
+})();
 
-  async function beginIdentityScan(){
-    const scan=document.getElementById('identityScan');
-    const status=document.getElementById('scanStatus');
-    const result=document.getElementById('scanResult');
-    const btn=document.getElementById('scanBtn');
-    const bubble=document.getElementById('verifySpeech');
-    btn.disabled=true;
-    scan.classList.add('scanning');
-    status.textContent='סורק פנים... 12%';
-    bubble.textContent='אל תזוזי... אני סורק עכשיו 👀';
-    const scanVoice = playVoice('scan');
-    const stages=[
-      [520,'בודק התאמת פנים... 34%'],
-      [1050,'משווה למאגר הסודי... 61%'],
-      [1650,'בודק חיוך... 82%'],
-      [2250,'כמעט סיימתי... 97%']
-    ];
-    stages.forEach(([t,text])=>setTimeout(()=>status.textContent=text,t));
-    await Promise.all([scanVoice, sleep(2850)]);
-    result.classList.add('show');
-    status.textContent='✅ זוהתה התאמה מלאה';
-    bubble.textContent='הסריקה הושלמה: זוהתה לינוי מנזר ✅';
-    await playVoice('identified');
-    await sleep(45);
-    goTo(3);
-    const envelopeButtons = [...document.querySelectorAll('.envelope')];
-    envelopeButtons.forEach(button => button.disabled = true);
-    document.getElementById('envelopeSpeech').textContent='האימות עבר בהצלחה! עכשיו תבחרי מעטפה אחת. 🐧';
-    await playVoice('envelope');
-    envelopeButtons.forEach(button => button.disabled = false);
-  }
-
-  async function chooseEnvelope(el,n){
-    document.querySelectorAll('.envelope').forEach(b=>b.disabled=true);
-    el.classList.add('opened');
-    const status=document.getElementById('envelopeStatus');
-    status.textContent=n===2?'בחירה חשודה... אבל נכונה 😏':'בחירה מעולה 👀';
-    await sleep(850);
-    goTo(4);
-    document.getElementById('questionSpeech').textContent='יפה מאוד... מצאת את ההודעה האמיתית. 💌';
-    document.getElementById('romanticGlow').classList.add('show');
-    startHearts();
-    await playVoice('found');
-    await sleep(35);
-    document.getElementById('questionSpeech').textContent='יש מישהו שחושב שערב משותף יכול להפוך לזיכרון ממש יפה. ❤️';
-    await playVoice('romantic');
-  }
-
-  async function stealNo(e){
-    e.preventDefault();
-    if (theftDone) return;
-    theftDone = true;
-    stopAudio();
-
-    const btn = document.getElementById('noBtn');
-    const penguin = document.getElementById('mainPenguin');
-    const bubble = document.getElementById('questionSpeech');
-    const pr = penguin.getBoundingClientRect();
-    const br = btn.getBoundingClientRect();
-
-    penguin.classList.add('snatching');
-    penguin.style.width = pr.width+'px';
-    penguin.style.height = pr.height+'px';
-    penguin.style.left = pr.left+'px';
-    penguin.style.top = pr.top+'px';
-    document.body.appendChild(penguin);
-
-    bubble.textContent = 'רגע, רגע... את הכפתור הזה אני חייב לעצור. 😏';
-    await playVoice('wait');
-
-    penguin.style.left = (br.left + br.width/2 - pr.width/2)+'px';
-    penguin.style.top = (br.top - pr.height + 38)+'px';
-    penguin.style.transform = 'rotate(5deg) scale(.96)';
-    await sleep(560);
-
-    btn.classList.add('stolen');
-    const held = document.createElement('div');
-    held.className = 'held-button';
-    held.textContent = 'לא ✕';
-    penguin.appendChild(held);
-    penguin.classList.add('hugging');
-    bubble.textContent = 'הופ! את זה אני לוקח איתי!';
-    await playVoice('snatch');
-
-    penguin.style.left = '18px';
-    penguin.style.top = '42%';
-    penguin.style.transform = 'rotate(-7deg) scale(.88)';
-    await sleep(620);
-
-    bubble.textContent = 'מבטיח... אני מחזיר אותו אחרי הדייט הראשון.';
-    await playVoice('promise');
-    await sleep(35);
-
-    bubble.textContent = 'עד אז... נשאר רק הכפתור הירוק 😇';
-    await playVoice('green');
-    penguin.classList.add('can-rage');
-    penguin.setAttribute('role','button');
-    penguin.setAttribute('aria-label','לחצי על הפינגווין');
-    penguin.onclick = rageAndTrashNo;
-    bubble.textContent = 'ואל תנסי לקחת אותו בחזרה... 😏';
-  }
-
-  async function rageAndTrashNo(){
-    if (noDestroyed) return;
-    noDestroyed = true;
-    const penguin = document.getElementById('mainPenguin');
-    const bubble = document.getElementById('questionSpeech');
-    penguin.onclick = null;
-    penguin.classList.remove('can-rage');
-    penguin.classList.add('raging');
-    const angry = document.createElement('div');
-    angry.className = 'angry-mark';
-    angry.textContent = '💢';
-    penguin.appendChild(angry);
-    bubble.textContent = 'מה?! את עדיין מנסה לקחת אותו?';
-    await playVoice('angry');
-    await sleep(120);
-
-    const held = penguin.querySelector('.held-button');
-    if (held) held.remove();
-    penguin.classList.remove('hugging','raging');
-    const left = document.createElement('div');
-    const right = document.createElement('div');
-    left.className='torn-half left'; right.className='torn-half right';
-    left.textContent='ל'; right.textContent='א ✕';
-    penguin.append(left,right);
-    bubble.textContent = 'טוב... עכשיו הוא באמת לא חוזר.';
-    await playVoice('tear');
-
-    const bin=document.createElement('div');
-    bin.className='trash-bin'; bin.textContent='🗑️';
-    document.body.appendChild(bin);
-    requestAnimationFrame(()=>bin.classList.add('show'));
-    await sleep(500);
-    left.style.transform='translate(-55px, 120px) rotate(-95deg) scale(.78)';
-    right.style.transform='translate(-20px, 120px) rotate(100deg) scale(.78)';
-    await sleep(700);
-    left.style.transform='translate(-90px, 265px) rotate(-220deg) scale(.42)';
-    right.style.transform='translate(-45px, 265px) rotate(230deg) scale(.42)';
-    left.style.opacity='0'; right.style.opacity='0';
-    await sleep(1550);
-    left.remove(); right.remove(); angry.remove();
-    bubble.textContent = 'יש דברים שפשוט שייכים לפח. 😌';
-    await playVoice('trash');
-    setTimeout(()=>{bin.classList.remove('show'); setTimeout(()=>bin.remove(),400)},700);
-  }
-
-  async function acceptDate(){
-    stopAudio();
-    goTo(5);
-    confetti();
-    document.querySelector('#step5 .stamp').textContent = 'הדייט אושר! ✅';
-    const bubble = document.querySelector('#step5 .speech');
-    bubble.textContent = 'יששש! המשימה הושלמה בהצלחה!';
-    await playVoice('success');
-    await sleep(40);
-    bubble.textContent = 'עכשיו אפשר להחזיר את הכפתור האדום למחסן. 😂';
-    await playVoice('warehouse');
-    await sleep(40);
-    bubble.textContent = 'תגיעי עם חיוך... את כל השאר הוא כבר מתכנן. ✨';
-    await playVoice('finalRomantic');
-  }
-
-  function confetti(){
-    for(let i=0;i<90;i++){
-      const c=document.createElement('i'); c.className='confetti';
-      c.style.left=Math.random()*100+'vw';
-      c.style.background=`hsl(${Math.random()*360} 90% 60%)`;
-      c.style.animationDelay=Math.random()*.6+'s';
-      c.style.animationDuration=(1.8+Math.random()*1.6)+'s';
-      document.body.appendChild(c);
-      setTimeout(()=>c.remove(),3600);
-    }
-  }
-
-  function startHearts(){
-    for(let i=0;i<16;i++){
-      setTimeout(()=>{
-        const h=document.createElement('span');
-        h.className='heart-float';
-        h.textContent=Math.random()>.35?'♥':'♡';
-        h.style.left=(5+Math.random()*90)+'vw';
-        h.style.fontSize=(12+Math.random()*18)+'px';
-        h.style.animationDuration=(4.8+Math.random()*3)+'s';
-        h.style.color=Math.random()>.5?'#ff9db5':'#ffd4df';
-        document.body.appendChild(h);
-        setTimeout(()=>h.remove(),8000);
-      },i*220);
-    }
-  }
-
-  function snow(){
-    const box=document.getElementById('snow');
-    for(let i=0;i<34;i++){
-      const f=document.createElement('span'); f.className='flake';
-      f.textContent=Math.random()>.5?'❄':'•';
-      f.style.left=Math.random()*100+'%';
-      f.style.fontSize=(8+Math.random()*14)+'px';
-      f.style.animationDuration=(7+Math.random()*10)+'s';
-      f.style.animationDelay=(-Math.random()*14)+'s';
-      box.appendChild(f);
-    }
-  }
-
-  snow();
-  const friendPhone = ''; // אפשר להכניס כאן מספר בפורמט 9725XXXXXXXX
-  const message = 'היי 😊 מאשרת הגעה לדייט ביום חמישי 06.08.2026 בשעה 21:00. מחכה לראות מה תכננת 😄🐧';
-  const whatsappBtn = document.getElementById('whatsappBtn');
-  const whatsappUrl = friendPhone
-    ? `https://wa.me/${friendPhone}?text=${encodeURIComponent(message)}`
-    : `https://wa.me/?text=${encodeURIComponent(message)}`;
-  whatsappBtn.href = whatsappUrl;
-  whatsappBtn.addEventListener('click', () => {
-    const status = document.getElementById('confirmStatus');
-    status.innerHTML = '<strong style="color:#42e58b">✅ האישור מוכן!</strong><br>נשאר לבחור את השיחה וללחוץ שליחה בוואטסאפ.';
-    whatsappBtn.textContent = '✅ המשיכי לשליחת האישור';
-  });
-
-  window.addEventListener('load', async () => {
-    await sleep(700);
-    document.getElementById('speech1').textContent='רגע אחד... את בדיוק מי שחיפשתי. 👀';
-    playVoice('intro');
-  });
+show(0);
 </script>
 </body>
 </html>
